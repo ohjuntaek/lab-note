@@ -143,6 +143,146 @@ CloseableHttpClient httpclient = HttpClients.custom()
 
 ## 1.3 HTTP execution context
 
+- HTTP가 스테이트리스 한데 어떻게 콘텍스트 만드냐? HttpClient 에다가 맵 같은거 만들어 놨다 : HttpContext
+	- 이거는 여러 스레드에 비안정적이다 스레드마다 자기 콘텍스트 가지는게 좋다
+- 이런 것들이 있다
+	- HttpConnection, HttpHost, HttpRoute, HttpRequest, HttpResonse, RequestConfig
 
-아놔 망했다 그만하자
+		```java
+		HttpContext context = <...>  
+		HttpClientContext clientContext = HttpClientContext.adapt(context);  
+		HttpHost target = clientContext.getTargetHost();  
+		HttpRequest request = clientContext.getRequest();  
+		HttpResponse response = clientContext.getResponse();  
+		RequestConfig config = clientContext.getRequestConfig();
+		```
+		- 보면 clientContext 안에 위에 말한 것들이 다 있음
 
+
+## 1.4 HTTP protocol interceptors
+
+
+```java
+CloseableHttpClient httpclient = HttpClients.custom()  
+        .addInterceptorLast((HttpRequestInterceptor) (request, context) -> {  
+            AtomicInteger count = (AtomicInteger) context.getAttribute("count");  
+            request.addHeader("Count", Integer.toString(count.getAndIncrement()));  
+            System.out.println("count = " + count);  
+        })  
+        .build();  
+AtomicInteger count = new AtomicInteger(1);  
+HttpClientContext localContext = HttpClientContext.create();  
+localContext.setAttribute("count", count);  
+HttpGet httpget = new HttpGet("http://localhost:7003/");  
+for (int i = 0; i < 10; i++) {  
+    CloseableHttpResponse response = httpclient.execute(httpget, localContext);  
+    try {  
+        HttpEntity entity = response.getEntity();  
+    } finally {  
+        response.close();  
+    }  
+}
+```
+
+![[Pasted image 20230127115821.png|300]]
+
+아오 해석이
+- 보통 프로토콜 인터셉터는 헤더를 조작하거나 한다
+- 또 엔터티 조작도 할 수 있다, 대표 적으로 압축/압축해제 > 엔터티를 데코레이터 해서 래퍼 엔터티를 만들 수 있다
+- 하나의 논리적 유닛으로 묶을 수 있다 (위처럼)
+
+하 영어... 
+
+
+## 1.5 Exception Handling
+
+- 보통 Http 프로토콜 프로세서에서 에러는 IOException 아니면 HttpException인데 IOException은 보통 일시적인거고 뒤에꺼는 심각하다 
+- HttpClient가 HttpException을 ClientProtocolException(IOException의 서브클래스)로 다시 던지는걸 주목하라. 유저가 IOException만 잡으면 저 위에 둘다 잡을 수 있게 해놓은 것이다 
+	- (catch 절 한개만 쓰도록 섬세하네.. )
+- 1.5.1 HTTP transport safety
+	- HTTP 는 한방 쏘고받는거에 최적화됐지 트랜잭션 이런거에 안적합하다
+	- 그럼에도 전송 프로토콜에 쓸 수 있는데, 앱 레이어의 http method의 멱등성을 만족.. 응?
+- 1.5.2 Idempotent methods
+	- 100번하나 1번하나 결과는 똑같다
+	- 일단 내가 아는 부분
+		- GET, HEAD : 멱등, 나머지 안멱등
+	- 음.. 고유한 트랜잭션 아이디를 제공하거나 같은 로직연산 실행을 피해서 달성할 수 있다고? 뭐를?  멱등성을? 그런거 같긴 하네 생각해보니
+- 1.5.3 Automatic exception recovery
+	- 뭐 로직적인거나 프로토콜 에러는 시도 안하고 멱등한거는 재시도하고 뭐 전송 예외도 재시도하고? 별 거 없는 듯
+- 1.5.4 Request retry handler
+	- HttpRequestRetryHandler
+		```java
+HttpRequestRetryHandler myRetryHandler = new HttpRequestRetryHandler() {  
+    public boolean retryRequest(  
+            IOException exception,  
+            int executionCount,  
+            HttpContext context) {  
+        if (executionCount >= 5) {  
+            // Do not retry if over max retry count  
+            return false;  
+        }  
+        if (exception instanceof InterruptedIOException) {  
+            // Timeout  
+            return false;  
+        }  
+        if (exception instanceof UnknownHostException) {  
+            // Unknown host  
+            return false;  
+        }  
+        if (exception instanceof ConnectTimeoutException) {  
+            // Connection refused  
+            return false;  
+        }  
+        if (exception instanceof SSLException) {  
+            // SSL handshake exception  
+            return false;  
+        }  
+        HttpClientContext clientContext = HttpClientContext.adapt(context);  
+        HttpRequest request = clientContext.getRequest();  
+        boolean idempotent = !(request instanceof HttpEntityEnclosingRequest);  
+        if (idempotent) {  
+            // Retry if the request is considered idempotent  
+            return true;  
+        }  
+        return false;  
+    }  
+};  
+CloseableHttpClient httpclient = HttpClients.custom()  
+        .setRetryHandler(myRetryHandler)  
+        .build();
+		```
+	- StandardHttpRequestRetryHandler 란 걸 쓸 수 있단다
+
+- 1.6 Aborting requests
+	- HttpUriRequest#abort()
+	- InterruptedIOException
+
+- 1.7. Redirect handling
+```java
+
+LaxRedirectStrategy redirectStrategy = new LaxRedirectStrategy();  
+CloseableHttpClient httpclient = HttpClients.custom()  
+        .setRedirectStrategy(redirectStrategy)  
+        .build();
+
+---
+
+CloseableHttpClient httpclient = HttpClients.createDefault();  
+HttpClientContext context = HttpClientContext.create();  
+HttpGet httpget = new HttpGet("http://localhost:8080/");  
+CloseableHttpResponse response = httpclient.execute(httpget, context);  
+try {  
+    HttpHost target = context.getTargetHost();  
+    List<URI> redirectLocations = context.getRedirectLocations();  
+    URI location = URIUtils.resolve(httpget.getURI(), target, redirectLocations);  
+    System.out.println("Final HTTP location: " + location.toASCIIString());  
+    // Expected to be an absolute URI  
+} finally {  
+    response.close();  
+}
+```
+
+
+드디어 챕터1 끝..
+
+그냥 이런게 있구나 정도네 그래서 펀더먼덜 챕터군
