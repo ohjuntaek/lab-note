@@ -4,59 +4,35 @@
     "type": "split",
     "children": [
       {
-        "id": "f1bbe13c73918af4",
+        "id": "651b4689b025b4af",
         "type": "tabs",
         "children": [
           {
-            "id": "f909c91d8ad7b761",
+            "id": "622fd4bc53116a1d",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "스프링/스프링 6.0 독스/스프링 6.0 독스 보기.md",
+                "file": "책/자바 병렬 프로그래밍.md",
                 "mode": "source",
                 "source": false
               }
             }
           },
           {
-            "id": "51c48677a74ddf07",
+            "id": "9c74d5ba02e4505d",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "스프링/스프링 6.0 독스/스프링 6.0 독스 보기.md",
-                "mode": "source",
-                "source": false
-              }
-            }
-          },
-          {
-            "id": "d2013a121b70e731",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "스프링/스프링 6.0 독스/10. Ahead of Time Optimizations.md",
-                "mode": "source",
-                "source": false
-              }
-            }
-          },
-          {
-            "id": "486b6b718336849c",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "소프트웨어 공학/리스코프 치환 원칙.md",
+                "file": "책/자바 네트워크 프로그래밍.md",
                 "mode": "source",
                 "source": false
               }
             }
           }
         ],
-        "currentTab": 3
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -106,7 +82,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 300
+    "width": 200
   },
   "right": {
     "id": "79d3c9367f972a13",
@@ -122,7 +98,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "소프트웨어 공학/리스코프 치환 원칙.md",
+                "file": "책/자바 네트워크 프로그래밍.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -139,7 +115,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "소프트웨어 공학/리스코프 치환 원칙.md",
+                "file": "책/자바 네트워크 프로그래밍.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -162,7 +138,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "소프트웨어 공학/리스코프 치환 원칙.md"
+                "file": "책/자바 네트워크 프로그래밍.md"
               }
             }
           }
@@ -171,7 +147,8 @@
       }
     ],
     "direction": "horizontal",
-    "width": 300
+    "width": 200,
+    "collapsed": true
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -183,25 +160,43 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "486b6b718336849c",
+  "active": "9c74d5ba02e4505d",
   "lastOpenFiles": [
-    "Pasted image 20230307134230.png",
-    "Pasted image 20230307134219.png",
-    "Pasted image 20230307134141.png",
-    "Pasted image 20230307133634.png",
-    "스프링/스프링 6.0 독스/10. Ahead of Time Optimizations.md",
+    "file/Pasted image 20230421195653.png",
+    "INBOX/Java Stream, URLConnection 의 스트림.md",
+    "file/Pasted image 20230421202112.png",
+    "file/Pasted image 20230421202033.png",
+    "file/Pasted image 20230421201844.png",
+    "file/Pasted image 20230421201638.png",
+    "file/Pasted image 20230421201357.png",
+    "file/Pasted image 20230421201259.png",
+    "file/Pasted image 20230421201152.png",
+    "file/Pasted image 20230421201044.png",
+    "file/Pasted image 20230421200535.png",
+    "책/자바 네트워크 프로그래밍.md",
+    "책/자바 병렬 프로그래밍.md",
+    "책/자바 개발자를 위한 97가지 제안.md",
+    "INBOX/공변 반공변.md",
+    "책/만들면서 배우는 클린아키텍처.md",
+    "file",
+    "INBOX/코틀린 스콥 펑션.md",
+    "README.md",
     "소프트웨어 공학/리스코프 치환 원칙.md",
+    "책/코틀린 인 액션.md",
+    "INBOX",
+    "OS/자바 IO 내부 동작 원리.md",
+    "OS",
+    "스프링/스프링 6.0 독스/스프링 6.0 독스 보기.md",
+    "스프링/스프링 6.0 독스/10. Ahead of Time Optimizations.md",
+    "소프트웨어 공학/file",
     "소프트웨어 공학",
     "스프링/스프링 6.0 독스",
-    "스프링/스프링 6.0 독스/스프링 6.0 독스 보기.md",
     "네트워크/HttpClient 4.5 공식문서 보기/README.md",
     "네트워크/HttpClient 4.5 공식문서 보기/HttpClient Overview, Quick Start.md",
     "네트워크/아파치 톰캣 카탈리나 탐구/카탈리나 보기.md",
     "스프링/스프링부트 3.0.md",
     "DB/샤딩스피어 문서 보기.md",
     "책/Cloud Native Spring in Action/README.md.md",
-    "네트워크/HttpClient 4.5 공식문서 보기/HttpClient Tutorial.md",
-    "Pasted image 20230127115821.png",
-    "네트워크/HttpClient 4.5 공식문서 보기/file/Pasted image 20230126180000.png"
+    "네트워크/HttpClient 4.5 공식문서 보기/HttpClient Tutorial.md"
   ]
 }
